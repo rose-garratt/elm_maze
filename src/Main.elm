@@ -12,10 +12,10 @@ main : Html msg
 main =
     let
         rowNo =
-            6
+            40
 
         colNo =
-            8
+            40
 
         monospace =
             Html.Attributes.style [ ( "font-family", "monospace" ) ]
@@ -24,7 +24,7 @@ main =
             Random.list (rowNo * colNo) northOrEast
 
         seed =
-            Random.initialSeed 42
+            Random.initialSeed 99
 
         ( directions, newSeed ) =
             Random.step generator seed
@@ -48,18 +48,36 @@ createCell directions width rowNo colNo cell =
 
         direction =
             Maybe.withDefault North (Array.get index directions)
+
+        filterDirection : Direction -> Maybe Direction
+        filterDirection filterDir =
+            let
+                lastCol =
+                    width - 1
+
+                topRow =
+                    rowNo == 0
+
+                rightCol =
+                    colNo == lastCol
+            in
+            if topRow && not rightCol then
+                Just East
+            else if rightCol && not topRow then
+                Just North
+            else if topRow && rightCol then
+                Nothing
+            else
+                Just direction
     in
-    if r == 0 && c /= lastCol then
-        Just East
-    else if c == lastCol && r /= 0 then
-        Just North
-    else if r == 0 && c == lastCol then
-        Nothing
-    else
-        Just direction
+    case filterDirection direction of
+        Just x ->
             setBoundaryOfCell
-            Path
-            direction
+                Path
+                x
+                cell
+
+        Nothing ->
             cell
 
 
