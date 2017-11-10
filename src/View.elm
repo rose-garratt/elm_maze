@@ -1,8 +1,9 @@
-module View exposing (drawMaze)
+module View exposing (view)
 
 import Array exposing (Array)
-import Html exposing (Html, div, text)
+import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 import Maze exposing (Boundary(..), Cell, Direction(..), Maze)
 import Model exposing (..)
 
@@ -63,8 +64,26 @@ drawMaze maze =
         |> copyTopToBottom
 
 
-view : Model -> Html a
+view : Model -> Html Message
 view model =
+    div [] [ mazeView model, buttonView model ]
+
+
+buttonView : Model -> Html Message
+buttonView model =
+    let
+        smallable =
+            not (model.rowNo <= 5 || model.colNo <= 5)
+    in
+    div []
+        [ button [ onClick Next ] [ text "Next" ]
+        , button [ onClick Bigger ] [ text "Bigger" ]
+        , button [ onClick Smaller ] [ text "Smaller" ]
+        ]
+
+
+mazeView : Model -> Html Message
+mazeView model =
     let
         monospace =
             Html.Attributes.style [ ( "font-family", "monospace" ) ]

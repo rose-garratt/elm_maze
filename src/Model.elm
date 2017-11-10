@@ -8,6 +8,7 @@ type alias Model =
     { rowNo : RowNo, colNo : ColNo, seedInt : Int, maze : Maze }
 
 
-model : Model
-model =
-    { rowNo = 12, colNo = 40, seedInt = 1, maze = Maze.buildRandomMaze 12 40 1 }
+type Message
+    = Next
+    | Bigger
+    | Smaller
