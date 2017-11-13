@@ -8904,6 +8904,120 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 				A2(_elm_lang$core$List$filter, _elm_lang$core$Tuple$second, list))));
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
+var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode$field, 'keyCode', _elm_lang$core$Json_Decode$int);
+var _elm_lang$html$Html_Events$targetChecked = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'checked',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$bool);
+var _elm_lang$html$Html_Events$targetValue = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'value',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
+var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
+var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
+var _elm_lang$html$Html_Events$onFocus = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focus',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onBlur = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'blur',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
+	_elm_lang$html$Html_Events$defaultOptions,
+	{preventDefault: true});
+var _elm_lang$html$Html_Events$onSubmit = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		_elm_lang$html$Html_Events$onSubmitOptions,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onCheck = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'change',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
+};
+var _elm_lang$html$Html_Events$onInput = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
+};
+var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseout',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseleave',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseenter',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseup',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'dblclick',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$Options = F2(
+	function (a, b) {
+		return {stopPropagation: a, preventDefault: b};
+	});
 var _user$project$Grid$createGrid = F3(
 	function (r, c, intval) {
 		return A2(
@@ -9101,16 +9215,65 @@ var _user$project$Maze$buildRandomMaze = F3(
 				colNo),
 			A2(_user$project$Maze$buildMaze, rowNo, colNo));
 	});
-var _user$project$Model$model = {
-	rowNo: 12,
-	colNo: 40,
-	seedInt: 1,
-	maze: A3(_user$project$Maze$buildRandomMaze, 12, 40, 1)
-};
 var _user$project$Model$Model = F4(
 	function (a, b, c, d) {
 		return {rowNo: a, colNo: b, seedInt: c, maze: d};
 	});
+var _user$project$Model$Smaller = {ctor: 'Smaller'};
+var _user$project$Model$Bigger = {ctor: 'Bigger'};
+var _user$project$Model$Next = {ctor: 'Next'};
+var _user$project$View$buttonView = function (model) {
+	var smallable = !((_elm_lang$core$Native_Utils.cmp(model.rowNo, 5) < 1) || (_elm_lang$core$Native_Utils.cmp(model.colNo, 5) < 1));
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$button,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$Model$Next),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Next'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Model$Bigger),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Bigger'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(_user$project$Model$Smaller),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Smaller'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
 var _user$project$View$copyTopToBottom = function (cttb) {
 	var top = A2(_elm_lang$core$List$take, 1, cttb);
 	return A2(_elm_lang$core$Basics_ops['++'], cttb, top);
@@ -9192,7 +9355,7 @@ var _user$project$View$drawMaze = function (maze) {
 			_elm_lang$core$Array$toList(
 				A2(_elm_lang$core$Array$map, _user$project$View$drawRow, maze))));
 };
-var _user$project$View$view = function (model) {
+var _user$project$View$mazeView = function (model) {
 	var ds = _user$project$View$drawMaze(model.maze);
 	var monospace = _elm_lang$html$Html_Attributes$style(
 		{
@@ -9222,8 +9385,49 @@ var _user$project$View$view = function (model) {
 			ds));
 	return t;
 };
-var _user$project$Main$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
-	_user$project$View$view(_user$project$Model$model));
+var _user$project$View$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$View$mazeView(model),
+			_1: {
+				ctor: '::',
+				_0: _user$project$View$buttonView(model),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Main$buildModel = F3(
+	function (rowNo, colNo, seedInt) {
+		return {
+			rowNo: rowNo,
+			colNo: colNo,
+			seedInt: seedInt,
+			maze: A3(_user$project$Maze$buildRandomMaze, rowNo, colNo, seedInt)
+		};
+	});
+var _user$project$Main$model = A3(_user$project$Main$buildModel, 12, 40, 1);
+var _user$project$Main$update = F2(
+	function (message, model) {
+		var _p0 = message;
+		switch (_p0.ctor) {
+			case 'Next':
+				var newSeedInt = model.seedInt + 1;
+				return A3(_user$project$Main$buildModel, model.rowNo, model.colNo, newSeedInt);
+			case 'Bigger':
+				var newColNo = model.colNo + 5;
+				var newRowNo = model.rowNo + 5;
+				return A3(_user$project$Main$buildModel, newRowNo, newColNo, model.seedInt);
+			default:
+				var newColNo = ((_elm_lang$core$Native_Utils.cmp(model.rowNo, 5) < 1) || (_elm_lang$core$Native_Utils.cmp(model.colNo, 5) < 1)) ? model.colNo : (model.colNo - 5);
+				var newRowNo = ((_elm_lang$core$Native_Utils.cmp(model.rowNo, 5) < 1) || (_elm_lang$core$Native_Utils.cmp(model.colNo, 5) < 1)) ? model.rowNo : (model.rowNo - 5);
+				return A3(_user$project$Main$buildModel, newRowNo, newColNo, model.seedInt);
+		}
+	});
+var _user$project$Main$main = _elm_lang$html$Html$beginnerProgram(
+	{model: _user$project$Main$model, view: _user$project$View$view, update: _user$project$Main$update})();
 var Elm = {};
 Elm['Grid'] = Elm['Grid'] || {};
 if (typeof _user$project$Grid$main !== 'undefined') {

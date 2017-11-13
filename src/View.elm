@@ -78,7 +78,7 @@ buttonView model =
     div []
         [ button [ onClick Next ] [ text "Next" ]
         , button [ onClick Bigger ] [ text "Bigger" ]
-        , button [ onClick Smaller ] [ text "Smaller" ]
+        , button [ onClick Smaller, disabled (not smallable) ] [ text "Smaller" ]
         ]
 
 
