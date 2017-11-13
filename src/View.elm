@@ -8,6 +8,24 @@ import Maze exposing (Boundary(..), Cell, Direction(..), Maze)
 import Model exposing (..)
 
 
+mainContainer : Html.Attribute msg
+mainContainer =
+    style
+        [ ( "backgroundColor", "" )
+        , ( "width", "auto" )
+        , ( "padding", "25px" )
+        , ( "position", "center" )
+        , ( "text-align", "center" )
+        , ( "margin", "auto" )
+        ]
+
+
+buttonStyler : Html.Attribute msg
+buttonStyler =
+    style
+        [ ( "padding", "25px" ) ]
+
+
 drawRow : Array Cell -> List String
 drawRow cs =
     let
@@ -66,7 +84,9 @@ drawMaze maze =
 
 view : Model -> Html Message
 view model =
-    div [] [ mazeView model, buttonView model ]
+    div []
+        [ div [ mainContainer ] [ mazeView model, buttonView model ]
+        ]
 
 
 buttonView : Model -> Html Message
@@ -75,7 +95,7 @@ buttonView model =
         smallable =
             not (model.rowNo <= 5 || model.colNo <= 5)
     in
-    div []
+    div [ buttonStyler ]
         [ button [ onClick Next ] [ text "Next" ]
         , button [ onClick Bigger ] [ text "Bigger" ]
         , button [ onClick Smaller, disabled (not smallable) ] [ text "Smaller" ]
