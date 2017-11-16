@@ -6,6 +6,8 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Maze exposing (Boundary(..), Cell, Direction(..), Maze)
 import Model exposing (..)
+import Svg as S
+import Svg.Attributes as SA
 
 
 drawRow : Array Cell -> List String
@@ -66,7 +68,14 @@ drawMaze maze =
 
 view : Model -> Html Message
 view model =
-    div [] [ mazeView model, buttonView model ]
+    div [] [ mazeView model, buttonView model, roundRect ]
+
+
+roundRect : Html msg
+roundRect =
+    S.svg
+        [ SA.width "120", SA.height "120", SA.viewBox "0 0 120 120" ]
+        [ S.rect [ SA.x "10", SA.y "10", SA.width "100", SA.height "100", SA.rx "15", SA.ry "15" ] [] ]
 
 
 buttonView : Model -> Html Message
@@ -78,7 +87,7 @@ buttonView model =
     div []
         [ button [ onClick Next ] [ text "Next" ]
         , button [ onClick Bigger ] [ text "Bigger" ]
-        , button [ onClick Smaller ] [ text "Smaller" ]
+        , button [ onClick Smaller, disabled (not smallable) ] [ text "Smaller" ]
         ]
 
 
