@@ -86,7 +86,7 @@ drawMaze maze =
 
 view : Model -> Html Message
 view model =
-    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, roundRect ] ]
+    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, roundRect, line ] ]
 
 
 roundRect : Html msg
@@ -94,6 +94,30 @@ roundRect =
     S.svg
         [ SA.width "120", SA.height "120", SA.viewBox "0 0 120 120" ]
         [ S.rect [ SA.x "10", SA.y "10", SA.width "100", SA.height "100", SA.rx "15", SA.ry "15" ] [] ]
+
+
+line : Html msg
+line =
+    S.svg
+        [ SA.width "120", SA.height "120", SA.viewBox "0 0 120 120" ]
+        [ S.line [ SA.x1 "10", SA.y1 "10", SA.x2 "100", SA.y2 "100", SA.style "stroke:rgb(255,0,0);stroke-width:2" ] [] ]
+
+
+
+--given any co-ordinate, return a tuple of topLeft, topRight, bottomLeft & bottomRight co-ordinates
+
+
+type alias Coordinate =
+    { x : Int, y : Int }
+
+
+asCoordinate : Position -> Coordinate
+asCoordinate ( row, col ) =
+    let
+        scale =
+            10
+    in
+    { x = col * scale, y = row * scale }
 
 
 buttonView : Model -> Html Message

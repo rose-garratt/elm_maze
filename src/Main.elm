@@ -53,7 +53,7 @@ update message model =
 
 model : Model
 model =
-    buildModel 12 40 1
+    buildModel 5 5 1
 
 
 buildModel : RowNo -> ColNo -> Int -> Model
