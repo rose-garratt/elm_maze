@@ -1,12 +1,13 @@
 module View exposing (view)
 
 import Array exposing (Array)
+import Grid exposing (Position)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Maze exposing (Boundary(..), Cell, Direction(..), Maze)
 import Model exposing (..)
-import Svg as S
+import Svg as S exposing (Svg)
 import Svg.Attributes as SA
 
 
@@ -86,25 +87,27 @@ drawMaze maze =
 
 view : Model -> Html Message
 view model =
-    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, roundRect, line ] ]
+    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, asHtml [ drawNorthWall { x = 0, y = 0 } 10, drawEastWall { x = 0, y = 0 } 10 ] ] ]
 
 
-roundRect : Html msg
-roundRect =
-    S.svg
-        [ SA.width "120", SA.height "120", SA.viewBox "0 0 120 120" ]
-        [ S.rect [ SA.x "10", SA.y "10", SA.width "100", SA.height "100", SA.rx "15", SA.ry "15" ] [] ]
+asHtml : List (S.Svg msg) -> Html msg
+asHtml svgMsgs =
+    S.svg [ SA.width "120", SA.height "120", SA.viewBox "0 0 120 120" ] svgMsgs
 
 
-line : Html msg
-line =
-    S.svg
-        [ SA.width "120", SA.height "120", SA.viewBox "0 0 120 120" ]
-        [ S.line [ SA.x1 "10", SA.y1 "10", SA.x2 "100", SA.y2 "100", SA.style "stroke:rgb(255,0,0);stroke-width:2" ] [] ]
+drawNorthWall : Coordinate -> Int -> S.Svg msg
+drawNorthWall { x, y } scale =
+    S.line [ SA.x1 (toString x), SA.y1 (toString y), SA.x2 (toString (x + scale)), SA.y2 (toString y), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
 
 
+drawEastWall : Coordinate -> Int -> S.Svg msg
+drawEastWall { x, y } scale =
+    S.line [ SA.x1 (toString (x + scale)), SA.y1 (toString y), SA.x2 (toString (x + scale)), SA.y2 (toString (y + scale)), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
 
---given any co-ordinate, return a tuple of topLeft, topRight, bottomLeft & bottomRight co-ordinates
+
+drawWall : Coordinate -> Coordinate -> Int -> S.Svg msg
+drawWall { x1, y1 } { x2, y2 } scale =
+    S.line [ SA.x1 (toString x1), SA.y1 (toString y1), SA.x2 (toString x2), SA.y2 (toString y2), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
 
 
 type alias Coordinate =

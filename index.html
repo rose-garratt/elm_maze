@@ -9561,6 +9561,110 @@ var _user$project$Model$Model = F4(
 var _user$project$Model$Smaller = {ctor: 'Smaller'};
 var _user$project$Model$Bigger = {ctor: 'Bigger'};
 var _user$project$Model$Next = {ctor: 'Next'};
+var _user$project$View$asCoordinate = function (_p0) {
+	var _p1 = _p0;
+	var scale = 10;
+	return {x: _p1._1 * scale, y: _p1._0 * scale};
+};
+var _user$project$View$drawNorthWall = F2(
+	function (_p2, scale) {
+		var _p3 = _p2;
+		var _p5 = _p3.y;
+		var _p4 = _p3.x;
+		return A2(
+			_elm_lang$svg$Svg$line,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$x1(
+					_elm_lang$core$Basics$toString(_p4)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$y1(
+						_elm_lang$core$Basics$toString(_p5)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$x2(
+							_elm_lang$core$Basics$toString(_p4 + scale)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$y2(
+								_elm_lang$core$Basics$toString(_p5)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$style('stroke:rgb(255,0,0);stroke-width:2'),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			},
+			{ctor: '[]'});
+	});
+var _user$project$View$asHtml = function (svgMsg) {
+	return A2(
+		_elm_lang$svg$Svg$svg,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$width('120'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$height('120'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 120 120'),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: svgMsg,
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$View$line = A2(
+	_elm_lang$svg$Svg$svg,
+	{
+		ctor: '::',
+		_0: _elm_lang$svg$Svg_Attributes$width('120'),
+		_1: {
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$height('120'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 120 120'),
+				_1: {ctor: '[]'}
+			}
+		}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$svg$Svg$line,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$x1('10'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$y1('10'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$x2('100'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$y2('100'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$style('stroke:rgb(255,0,0);stroke-width:2'),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			},
+			{ctor: '[]'}),
+		_1: {ctor: '[]'}
+	});
 var _user$project$View$roundRect = A2(
 	_elm_lang$svg$Svg$svg,
 	{
@@ -9614,11 +9718,11 @@ var _user$project$View$copyTopToBottom = function (cttb) {
 };
 var _user$project$View$drawRow = function (cs) {
 	var asMiddleBlock = function (cell) {
-		var _p0 = cell;
-		var e = _p0._1;
+		var _p6 = cell;
+		var e = _p6._1;
 		var right = function () {
-			var _p1 = e;
-			if (_p1.ctor === 'Wall') {
+			var _p7 = e;
+			if (_p7.ctor === 'Wall') {
 				return '|';
 			} else {
 				return '.';
@@ -9643,8 +9747,8 @@ var _user$project$View$drawRow = function (cs) {
 	var asHorizontalBlock = F2(
 		function (dir, cell) {
 			var boundary = A2(_user$project$Maze$boundaryOfCell, dir, cell);
-			var _p2 = boundary;
-			if (_p2.ctor === 'Wall') {
+			var _p8 = boundary;
+			if (_p8.ctor === 'Wall') {
 				return '-+';
 			} else {
 				return '.+';
@@ -9833,13 +9937,29 @@ var _user$project$View$view = function (model) {
 						_1: {
 							ctor: '::',
 							_0: _user$project$View$roundRect,
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _user$project$View$line,
+								_1: {
+									ctor: '::',
+									_0: _user$project$View$asHtml(
+										A2(
+											_user$project$View$drawNorthWall,
+											{x: 0, y: 0},
+											10)),
+									_1: {ctor: '[]'}
+								}
+							}
 						}
 					}
 				}),
 			_1: {ctor: '[]'}
 		});
 };
+var _user$project$View$Coordinate = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
 var _user$project$Main$buildModel = F3(
 	function (rowNo, colNo, seedInt) {
 		return {
@@ -9849,7 +9969,7 @@ var _user$project$Main$buildModel = F3(
 			maze: A3(_user$project$Maze$buildRandomMaze, rowNo, colNo, seedInt)
 		};
 	});
-var _user$project$Main$model = A3(_user$project$Main$buildModel, 12, 40, 1);
+var _user$project$Main$model = A3(_user$project$Main$buildModel, 5, 5, 1);
 var _user$project$Main$update = F2(
 	function (message, model) {
 		var _p0 = message;
