@@ -5,7 +5,7 @@ import Grid exposing (Position)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Maze exposing (Boundary(..), Cell, Direction(..), Maze)
+import Maze exposing (Boundary(..), Cell, Direction(..), Maze, boundaryOfCell)
 import Model exposing (..)
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
@@ -87,7 +87,7 @@ drawMaze maze =
 
 view : Model -> Html Message
 view model =
-    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, asHtml [ drawNorthWall { x = 0, y = 0 } 10, drawEastWall { x = 0, y = 0 } 10 ] ] ]
+    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, asHtml [ drawNorthWall 10 { x = 0, y = 0 }, drawEastWall 10 { x = 0, y = 0 } ] ] ]
 
 
 asHtml : List (S.Svg msg) -> Html msg
@@ -95,19 +95,54 @@ asHtml svgMsgs =
     S.svg [ SA.width "120", SA.height "120", SA.viewBox "0 0 120 120" ] svgMsgs
 
 
-drawNorthWall : Coordinate -> Int -> S.Svg msg
-drawNorthWall { x, y } scale =
-    S.line [ SA.x1 (toString x), SA.y1 (toString y), SA.x2 (toString (x + scale)), SA.y2 (toString y), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
+drawNorthWall : Int -> Coordinate -> S.Svg msg
+drawNorthWall scale { x, y } =
+    drawWall { x = x, y = y } { x = x + scale, y = y }
 
 
-drawEastWall : Coordinate -> Int -> S.Svg msg
-drawEastWall { x, y } scale =
-    S.line [ SA.x1 (toString (x + scale)), SA.y1 (toString y), SA.x2 (toString (x + scale)), SA.y2 (toString (y + scale)), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
+drawEastWall : Int -> Coordinate -> S.Svg msg
+drawEastWall scale { x, y } =
+    drawWall { x = x + scale, y = y } { x = x + scale, y = y + scale }
 
 
-drawWall : Coordinate -> Coordinate -> Int -> S.Svg msg
-drawWall { x1, y1 } { x2, y2 } scale =
-    S.line [ SA.x1 (toString x1), SA.y1 (toString y1), SA.x2 (toString x2), SA.y2 (toString y2), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
+drawWall : Coordinate -> Coordinate -> S.Svg msg
+drawWall c1 c2 =
+    S.line [ SA.x1 (toString c1.x), SA.y1 (toString c1.y), SA.x2 (toString c2.x), SA.y2 (toString c2.y), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
+
+
+drawCell : Cell -> Position -> List (S.Svg msg)
+drawCell cell position =
+    let
+        scale =
+            10
+
+        coordinateOfCell =
+            asCoordinate position
+
+        isNorthWall =
+            boundaryOfCell North cell == Wall
+
+        isEastWall =
+            boundaryOfCell East cell == Wall
+
+        drawNorthWithScaleAndCoords =
+            drawNorthWall scale coordinateOfCell
+
+        drawEastWithScaleAndCoords =
+            drawEastWall scale coordinateOfCell
+    in
+    case ( isNorthWall, isEastWall ) of
+        ( True, True ) ->
+            [ drawNorthWithScaleAndCoords, drawEastWithScaleAndCoords ]
+
+        ( True, False ) ->
+            [ drawNorthWithScaleAndCoords ]
+
+        ( False, True ) ->
+            [ drawEastWithScaleAndCoords ]
+
+        ( False, False ) ->
+            []
 
 
 type alias Coordinate =

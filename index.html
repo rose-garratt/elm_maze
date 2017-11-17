@@ -9566,29 +9566,26 @@ var _user$project$View$asCoordinate = function (_p0) {
 	var scale = 10;
 	return {x: _p1._1 * scale, y: _p1._0 * scale};
 };
-var _user$project$View$drawNorthWall = F2(
-	function (_p2, scale) {
-		var _p3 = _p2;
-		var _p5 = _p3.y;
-		var _p4 = _p3.x;
+var _user$project$View$drawWall = F2(
+	function (c1, c2) {
 		return A2(
 			_elm_lang$svg$Svg$line,
 			{
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$x1(
-					_elm_lang$core$Basics$toString(_p4)),
+					_elm_lang$core$Basics$toString(c1.x)),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$y1(
-						_elm_lang$core$Basics$toString(_p5)),
+						_elm_lang$core$Basics$toString(c1.y)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$x2(
-							_elm_lang$core$Basics$toString(_p4 + scale)),
+							_elm_lang$core$Basics$toString(c2.x)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$y2(
-								_elm_lang$core$Basics$toString(_p5)),
+								_elm_lang$core$Basics$toString(c2.y)),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$svg$Svg_Attributes$style('stroke:rgb(255,0,0);stroke-width:2'),
@@ -9600,7 +9597,51 @@ var _user$project$View$drawNorthWall = F2(
 			},
 			{ctor: '[]'});
 	});
-var _user$project$View$asHtml = function (svgMsg) {
+var _user$project$View$drawEastWall = F2(
+	function (_p2, scale) {
+		var _p3 = _p2;
+		var _p5 = _p3.y;
+		var _p4 = _p3.x;
+		return A2(
+			_user$project$View$drawWall,
+			{x: _p4 + scale, y: _p5},
+			{x: _p4 + scale, y: _p5 + scale});
+	});
+var _user$project$View$drawNorthWall = F2(
+	function (_p6, scale) {
+		var _p7 = _p6;
+		var _p9 = _p7.y;
+		var _p8 = _p7.x;
+		return A2(
+			_elm_lang$svg$Svg$line,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$x1(
+					_elm_lang$core$Basics$toString(_p8)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$y1(
+						_elm_lang$core$Basics$toString(_p9)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$x2(
+							_elm_lang$core$Basics$toString(_p8 + scale)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$y2(
+								_elm_lang$core$Basics$toString(_p9)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$style('stroke:rgb(255,0,0);stroke-width:2'),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			},
+			{ctor: '[]'});
+	});
+var _user$project$View$asHtml = function (svgMsgs) {
 	return A2(
 		_elm_lang$svg$Svg$svg,
 		{
@@ -9616,113 +9657,19 @@ var _user$project$View$asHtml = function (svgMsg) {
 				}
 			}
 		},
-		{
-			ctor: '::',
-			_0: svgMsg,
-			_1: {ctor: '[]'}
-		});
+		svgMsgs);
 };
-var _user$project$View$line = A2(
-	_elm_lang$svg$Svg$svg,
-	{
-		ctor: '::',
-		_0: _elm_lang$svg$Svg_Attributes$width('120'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$svg$Svg_Attributes$height('120'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 120 120'),
-				_1: {ctor: '[]'}
-			}
-		}
-	},
-	{
-		ctor: '::',
-		_0: A2(
-			_elm_lang$svg$Svg$line,
-			{
-				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$x1('10'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$y1('10'),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$x2('100'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$y2('100'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$style('stroke:rgb(255,0,0);stroke-width:2'),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			},
-			{ctor: '[]'}),
-		_1: {ctor: '[]'}
-	});
-var _user$project$View$roundRect = A2(
-	_elm_lang$svg$Svg$svg,
-	{
-		ctor: '::',
-		_0: _elm_lang$svg$Svg_Attributes$width('120'),
-		_1: {
-			ctor: '::',
-			_0: _elm_lang$svg$Svg_Attributes$height('120'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 120 120'),
-				_1: {ctor: '[]'}
-			}
-		}
-	},
-	{
-		ctor: '::',
-		_0: A2(
-			_elm_lang$svg$Svg$rect,
-			{
-				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$x('10'),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$y('10'),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$width('100'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$height('100'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$rx('15'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$ry('15'),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			},
-			{ctor: '[]'}),
-		_1: {ctor: '[]'}
-	});
 var _user$project$View$copyTopToBottom = function (cttb) {
 	var top = A2(_elm_lang$core$List$take, 1, cttb);
 	return A2(_elm_lang$core$Basics_ops['++'], cttb, top);
 };
 var _user$project$View$drawRow = function (cs) {
 	var asMiddleBlock = function (cell) {
-		var _p6 = cell;
-		var e = _p6._1;
+		var _p10 = cell;
+		var e = _p10._1;
 		var right = function () {
-			var _p7 = e;
-			if (_p7.ctor === 'Wall') {
+			var _p11 = e;
+			if (_p11.ctor === 'Wall') {
 				return '|';
 			} else {
 				return '.';
@@ -9747,8 +9694,8 @@ var _user$project$View$drawRow = function (cs) {
 	var asHorizontalBlock = F2(
 		function (dir, cell) {
 			var boundary = A2(_user$project$Maze$boundaryOfCell, dir, cell);
-			var _p8 = boundary;
-			if (_p8.ctor === 'Wall') {
+			var _p12 = boundary;
+			if (_p12.ctor === 'Wall') {
 				return '-+';
 			} else {
 				return '.+';
@@ -9936,20 +9883,23 @@ var _user$project$View$view = function (model) {
 						_0: _user$project$View$buttonView(model),
 						_1: {
 							ctor: '::',
-							_0: _user$project$View$roundRect,
-							_1: {
-								ctor: '::',
-								_0: _user$project$View$line,
-								_1: {
+							_0: _user$project$View$asHtml(
+								{
 									ctor: '::',
-									_0: _user$project$View$asHtml(
-										A2(
-											_user$project$View$drawNorthWall,
+									_0: A2(
+										_user$project$View$drawNorthWall,
+										{x: 0, y: 0},
+										10),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_user$project$View$drawEastWall,
 											{x: 0, y: 0},
-											10)),
-									_1: {ctor: '[]'}
-								}
-							}
+											10),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
 						}
 					}
 				}),

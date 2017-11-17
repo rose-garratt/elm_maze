@@ -8,6 +8,26 @@ import Html.Attributes exposing (..)
 import Random exposing (Generator, Seed)
 
 
+type Boundary
+    = Wall
+    | Path
+
+
+type Direction
+    = North
+    | East
+    | South
+    | West
+
+
+type alias Maze =
+    Array (Array Cell)
+
+
+type alias Cell =
+    ( Boundary, Boundary, Boundary, Boundary )
+
+
 createCell : Array Direction -> ColNo -> RowNo -> ColNo -> Cell -> Cell
 createCell directions width rowNo colNo cell =
     let
@@ -73,29 +93,9 @@ mazePath lastCol r c =
         Nothing
 
 
-type Boundary
-    = Wall
-    | Path
-
-
 canIMove : Maze -> Position -> Direction -> Bool
 canIMove maze pos dir =
     True
-
-
-type Direction
-    = North
-    | East
-    | South
-    | West
-
-
-type alias Maze =
-    Array (Array Cell)
-
-
-type alias Cell =
-    ( Boundary, Boundary, Boundary, Boundary )
 
 
 boundaryOfCell : Direction -> Cell -> Boundary

@@ -45,10 +45,8 @@ height grid =
 
 
 
--- width : Grid a -> ColNo
--- width grid =
---   Array.length (Array.get 0 grid) --this doesn't work because It's outputting a Maybe
---
+--TODO Get all of the the positions from a Grid
+--TODO Given a position and a grid, return a maybe cell (with boundaries in tow)
 -- get : Position -> Grid a -> Maybe a
 -- get position grid =
 --   let
