@@ -5,6 +5,7 @@ import Grid exposing (Position)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import List exposing (concat)
 import Maze exposing (Boundary(..), Cell, Direction(..), Maze, boundaryOfCell)
 import Model exposing (..)
 import Svg as S exposing (Svg)
@@ -87,7 +88,7 @@ drawMaze maze =
 
 view : Model -> Html Message
 view model =
-    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, asHtml [ drawNorthWall 10 { x = 0, y = 0 }, drawEastWall 10 { x = 0, y = 0 } ] ] ]
+    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, asHtml (drawLineyMaze model.maze) ] ]
 
 
 asHtml : List (S.Svg msg) -> Html msg
@@ -110,12 +111,37 @@ drawWall c1 c2 =
     S.line [ SA.x1 (toString c1.x), SA.y1 (toString c1.y), SA.x2 (toString c2.x), SA.y2 (toString c2.y), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
 
 
-drawCell : Cell -> Position -> List (S.Svg msg)
-drawCell cell position =
-    let
-        scale =
-            10
 
+--TODO call draw cell for every cell in our maze
+--drawLineyMaze : Maze -> List (S.Svg msg)
+
+
+drawLineyMaze maze =
+    --turn maze into grid of cell and position using indexedMap
+    let
+        --fn takes (position, cell) -> List of Svg
+        fn : ( Position, Cell ) -> List (S.Svg a)
+        fn ( position, cell ) =
+            drawCell 10 position cell
+    in
+    Grid.indexedMap gridToCellNPosition maze
+        |> Grid.map fn
+        |> Grid.toList
+        |> List.concat
+
+
+gridToCellNPosition : Position -> Cell -> ( Position, Cell )
+gridToCellNPosition position cell =
+    ( position, cell )
+
+
+
+--find out maze width & height & each cell position etc.
+
+
+drawCell : Int -> Position -> Cell -> List (S.Svg msg)
+drawCell scale position cell =
+    let
         coordinateOfCell =
             asCoordinate position
 

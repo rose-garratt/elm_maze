@@ -44,6 +44,27 @@ height grid =
     Array.length grid
 
 
+width : Grid a -> ColNo
+width grid =
+    Array.get 0 grid
+        |> Maybe.withDefault Array.empty
+        |> Array.length
+
+
+flatten : Grid a -> Array a
+flatten =
+    Array.foldl
+        (\row accum ->
+            Array.append accum row
+        )
+        Array.empty
+
+
+toList : Grid a -> List a
+toList grid =
+    flatten grid |> Array.toList
+
+
 
 --TODO Get all of the the positions from a Grid
 --TODO Given a position and a grid, return a maybe cell (with boundaries in tow)
@@ -57,9 +78,9 @@ map fn gd =
     Array.map (\row -> Array.map fn row) gd
 
 
-indexedMap : (RowNo -> ColNo -> a -> b) -> Grid a -> Grid b
+indexedMap : (Position -> a -> b) -> Grid a -> Grid b
 indexedMap fn gd =
-    Array.indexedMap (\rownum row -> Array.indexedMap (\colnum col -> fn rownum colnum col) row) gd
+    Array.indexedMap (\rownum row -> Array.indexedMap (\colnum col -> fn ( rownum, colnum ) col) row) gd
 
 
 createGrid : RowNo -> ColNo -> a -> Grid a

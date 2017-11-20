@@ -21,15 +21,15 @@ type Direction
 
 
 type alias Maze =
-    Array (Array Cell)
+    Grid Cell
 
 
 type alias Cell =
     ( Boundary, Boundary, Boundary, Boundary )
 
 
-createCell : Array Direction -> ColNo -> RowNo -> ColNo -> Cell -> Cell
-createCell directions width rowNo colNo cell =
+createCell : Array Direction -> ColNo -> Position -> Cell -> Cell
+createCell directions width ( rowNo, colNo ) cell =
     let
         index =
             (rowNo * width) + colNo
