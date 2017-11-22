@@ -30,70 +30,9 @@ buttonStyler =
         [ ( "padding", "25px" ) ]
 
 
-drawRow : Array Cell -> List String
-drawRow cs =
-    let
-        asHorizontalBlock dir cell =
-            let
-                boundary =
-                    Maze.boundaryOfCell dir cell
-            in
-            case boundary of
-                Wall ->
-                    "-+"
-
-                Path ->
-                    ".+"
-
-        asMiddleBlock cell =
-            let
-                ( _, e, _, _ ) =
-                    cell
-
-                right =
-                    case e of
-                        Wall ->
-                            "|"
-
-                        Path ->
-                            "."
-            in
-            "." ++ right
-
-        top =
-            Array.map (asHorizontalBlock North) cs |> Array.foldr (++) "" |> (++) "+"
-
-        middle =
-            Array.map asMiddleBlock cs |> Array.foldr (++) "" |> (++) "|"
-    in
-    top :: middle :: []
-
-
-copyTopToBottom : List a -> List a
-copyTopToBottom cttb =
-    let
-        top =
-            List.take 1 cttb
-    in
-    cttb ++ top
-
-
-drawMaze : Maze -> List String
-drawMaze maze =
-    Array.map drawRow maze
-        |> Array.toList
-        |> List.foldr (++) []
-        |> copyTopToBottom
-
-
 view : Model -> Html Message
 view model =
-    div [] [ div [ mainContainer ] [ mazeView model, buttonView model, asHtml (drawLineyMaze model.maze) ] ]
-
-
-asHtml : List (S.Svg msg) -> Html msg
-asHtml svgMsgs =
-    S.svg [ SA.width "120", SA.height "120", SA.viewBox "0 0 120 120" ] svgMsgs
+    div [] [ div [ mainContainer ] [ drawLineyMaze model.maze, buttonView model ] ]
 
 
 drawNorthWall : Int -> Coordinate -> S.Svg msg
@@ -120,14 +59,45 @@ drawLineyMaze maze =
     --turn maze into grid of cell and position using indexedMap
     let
         --fn takes (position, cell) -> List of Svg
+        scale =
+            40
+
+        cols =
+            Grid.width maze
+
+        rows =
+            Grid.height maze
+
         fn : ( Position, Cell ) -> List (S.Svg a)
         fn ( position, cell ) =
-            drawCell 10 position cell
+            drawCell scale position cell
+
+        width =
+            cols
+                * scale
+                |> (+) 2
+                |> toString
+
+        height =
+            rows
+                * scale
+                |> (+) 2
+                |> toString
+
+        viewbox : String
+        viewbox =
+            "-1 -1 " ++ width ++ " " ++ height
+
+        asHtml : List (S.Svg msg) -> Html msg
+        asHtml svgMsgs =
+            S.svg [ SA.width width, SA.height height, SA.viewBox viewbox ] svgMsgs
     in
     Grid.indexedMap gridToCellNPosition maze
         |> Grid.map fn
         |> Grid.toList
         |> List.concat
+        |> List.append (drawBoundary scale rows cols)
+        |> asHtml
 
 
 gridToCellNPosition : Position -> Cell -> ( Position, Cell )
@@ -135,15 +105,23 @@ gridToCellNPosition position cell =
     ( position, cell )
 
 
+drawBoundary : Int -> Int -> Int -> List (S.Svg msg)
+drawBoundary scale rows cols =
+    let
+        actualHeight =
+            scale * rows
 
---find out maze width & height & each cell position etc.
+        actualWidth =
+            scale * cols
+    in
+    [ drawWall { x = 0, y = 0 } { x = 0, y = actualHeight }, drawWall { x = 0, y = actualHeight } { x = actualWidth, y = actualHeight } ]
 
 
 drawCell : Int -> Position -> Cell -> List (S.Svg msg)
 drawCell scale position cell =
     let
         coordinateOfCell =
-            asCoordinate position
+            asCoordinate position scale
 
         isNorthWall =
             boundaryOfCell North cell == Wall
@@ -175,12 +153,8 @@ type alias Coordinate =
     { x : Int, y : Int }
 
 
-asCoordinate : Position -> Coordinate
-asCoordinate ( row, col ) =
-    let
-        scale =
-            10
-    in
+asCoordinate : Position -> Int -> Coordinate
+asCoordinate ( row, col ) scale =
     { x = col * scale, y = row * scale }
 
 
@@ -195,18 +169,3 @@ buttonView model =
         , button [ onClick Bigger ] [ text "Bigger" ]
         , button [ onClick Smaller, disabled (not smallable) ] [ text "Smaller" ]
         ]
-
-
-mazeView : Model -> Html Message
-mazeView model =
-    let
-        monospace =
-            Html.Attributes.style [ ( "font-family", "monospace" ) ]
-
-        ds =
-            drawMaze model.maze
-
-        t =
-            div [ monospace ] <| List.map (\row -> div [] [ text row ]) ds
-    in
-    t

@@ -95,6 +95,7 @@ mazePath lastCol r c =
 
 canIMove : Maze -> Position -> Direction -> Bool
 canIMove maze pos dir =
+    --TODO check our boundaries or cell adjacent as well as position
     True
 
 
