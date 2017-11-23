@@ -93,10 +93,52 @@ mazePath lastCol r c =
         Nothing
 
 
+canIMoveEast : Maze -> Position -> Bool
+canIMoveEast maze pos =
+    let
+        maybeCell =
+            Grid.get pos maze
+    in
+    case maybeCell of
+        Just cell ->
+            boundaryOfCell East cell == Path
+
+        Nothing ->
+            False
+
+
+canIMoveNorth : Maze -> Position -> Bool
+canIMoveNorth maze pos =
+    Grid.get pos maze
+        |> Maybe.map (boundaryOfCell North)
+        |> Maybe.map ((==) Path)
+        |> Maybe.withDefault False
+
+
+canIMoveWest : Maze -> Position -> Bool
+canIMoveWest maze ( row, col ) =
+    canIMoveEast maze ( row, col - 1 )
+
+
+canIMoveSouth : Maze -> Position -> Bool
+canIMoveSouth maze ( row, col ) =
+    canIMoveNorth maze ( row + 1, col )
+
+
 canIMove : Maze -> Position -> Direction -> Bool
 canIMove maze pos dir =
-    --TODO check our boundaries or cell adjacent as well as position
-    True
+    case dir of
+        North ->
+            canIMoveNorth maze pos
+
+        South ->
+            canIMoveSouth maze pos
+
+        East ->
+            canIMoveEast maze pos
+
+        West ->
+            canIMoveWest maze pos
 
 
 boundaryOfCell : Direction -> Cell -> Boundary

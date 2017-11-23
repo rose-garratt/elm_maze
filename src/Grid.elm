@@ -67,10 +67,12 @@ toList grid =
 
 
 --TODO Get all of the the positions from a Grid
---TODO Given a position and a grid, return a maybe cell (with boundaries in tow)
--- get : Position -> Grid a -> Maybe a
--- get position grid =
---   let
+
+
+get : Position -> Grid a -> Maybe a
+get ( row, col ) grid =
+    Array.get row grid
+        |> Maybe.andThen (Array.get col)
 
 
 map : (a -> b) -> Grid a -> Grid b

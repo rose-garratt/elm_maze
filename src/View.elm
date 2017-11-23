@@ -32,7 +32,24 @@ buttonStyler =
 
 view : Model -> Html Message
 view model =
-    div [] [ div [ mainContainer ] [ drawLineyMaze model.maze, buttonView model ] ]
+    div [] [ div [ mainContainer ] [ drawLineyMaze model.maze, buttonView model, test model.maze ] ]
+
+
+test : Maze -> Html msg
+test maze =
+    let
+        position =
+            ( 0, 0 )
+
+        canIMove : Bool
+        canIMove =
+            Maze.canIMove maze position
+
+        dir =
+            [ canIMove North, canIMove South, canIMove East, canIMove West ]
+    in
+    toString dir
+        |> text
 
 
 drawNorthWall : Int -> Coordinate -> S.Svg msg
