@@ -38,18 +38,19 @@ view model =
 test : Maze -> Html msg
 test maze =
     let
-        position =
-            ( 0, 0 )
-
-        canIMove : Bool
-        canIMove =
-            Maze.canIMove maze position
-
+        -- position =
+        --     ( 0, 0 )
+        --
+        -- canIMove : Direction -> Bool
+        -- canIMove =
+        --     Maze.canIMove maze position
+        -- dir =
+        --     [ canIMove North, canIMove South, canIMove East, canIMove West ]
         dir =
-            [ canIMove North, canIMove South, canIMove East, canIMove West ]
+            Maze.validDirections maze ( 1, 1 )
     in
-    toString dir
-        |> text
+        toString dir
+            |> text
 
 
 drawNorthWall : Int -> Coordinate -> S.Svg msg
@@ -67,15 +68,10 @@ drawWall c1 c2 =
     S.line [ SA.x1 (toString c1.x), SA.y1 (toString c1.y), SA.x2 (toString c2.x), SA.y2 (toString c2.y), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
 
 
-
---TODO call draw cell for every cell in our maze
---drawLineyMaze : Maze -> List (S.Svg msg)
-
-
+drawLineyMaze : Maze -> Html msg
 drawLineyMaze maze =
     --turn maze into grid of cell and position using indexedMap
     let
-        --fn takes (position, cell) -> List of Svg
         scale =
             40
 
@@ -109,12 +105,12 @@ drawLineyMaze maze =
         asHtml svgMsgs =
             S.svg [ SA.width width, SA.height height, SA.viewBox viewbox ] svgMsgs
     in
-    Grid.indexedMap gridToCellNPosition maze
-        |> Grid.map fn
-        |> Grid.toList
-        |> List.concat
-        |> List.append (drawBoundary scale rows cols)
-        |> asHtml
+        Grid.indexedMap gridToCellNPosition maze
+            |> Grid.map fn
+            |> Grid.toList
+            |> List.concat
+            |> List.append (drawBoundary scale rows cols)
+            |> asHtml
 
 
 gridToCellNPosition : Position -> Cell -> ( Position, Cell )
@@ -131,7 +127,7 @@ drawBoundary scale rows cols =
         actualWidth =
             scale * cols
     in
-    [ drawWall { x = 0, y = 0 } { x = 0, y = actualHeight }, drawWall { x = 0, y = actualHeight } { x = actualWidth, y = actualHeight } ]
+        [ drawWall { x = 0, y = 0 } { x = 0, y = actualHeight }, drawWall { x = 0, y = actualHeight } { x = actualWidth, y = actualHeight } ]
 
 
 drawCell : Int -> Position -> Cell -> List (S.Svg msg)
@@ -152,18 +148,18 @@ drawCell scale position cell =
         drawEastWithScaleAndCoords =
             drawEastWall scale coordinateOfCell
     in
-    case ( isNorthWall, isEastWall ) of
-        ( True, True ) ->
-            [ drawNorthWithScaleAndCoords, drawEastWithScaleAndCoords ]
+        case ( isNorthWall, isEastWall ) of
+            ( True, True ) ->
+                [ drawNorthWithScaleAndCoords, drawEastWithScaleAndCoords ]
 
-        ( True, False ) ->
-            [ drawNorthWithScaleAndCoords ]
+            ( True, False ) ->
+                [ drawNorthWithScaleAndCoords ]
 
-        ( False, True ) ->
-            [ drawEastWithScaleAndCoords ]
+            ( False, True ) ->
+                [ drawEastWithScaleAndCoords ]
 
-        ( False, False ) ->
-            []
+            ( False, False ) ->
+                []
 
 
 type alias Coordinate =
@@ -181,8 +177,8 @@ buttonView model =
         smallable =
             not (model.rowNo <= 5 || model.colNo <= 5)
     in
-    div [ buttonStyler ]
-        [ button [ onClick Next ] [ text "Next" ]
-        , button [ onClick Bigger ] [ text "Bigger" ]
-        , button [ onClick Smaller, disabled (not smallable) ] [ text "Smaller" ]
-        ]
+        div [ buttonStyler ]
+            [ button [ onClick Next ] [ text "Next" ]
+            , button [ onClick Bigger ] [ text "Bigger" ]
+            , button [ onClick Smaller, disabled (not smallable) ] [ text "Smaller" ]
+            ]
