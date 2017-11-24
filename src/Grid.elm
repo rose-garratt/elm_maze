@@ -107,3 +107,17 @@ create : RowNo -> ColNo -> a -> Grid a
 create rowNos colNos thing =
     Array.repeat colNos thing
         |> Array.repeat rowNos
+
+
+prettyPrint : Int -> Grid a -> List String
+prettyPrint sz grid =
+    let
+        prettyCol : a -> String
+        prettyCol c =
+            toString c |> String.left sz |> String.padLeft sz '.'
+
+        prettyRow : Array a -> String
+        prettyRow cols =
+            Array.map prettyCol cols |> Array.toList |> String.join "|"
+    in
+        Array.map prettyRow grid |> Array.toList
