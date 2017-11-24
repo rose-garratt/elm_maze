@@ -22,7 +22,7 @@ update message model =
                 newSeedInt =
                     model.seedInt + 1
             in
-            buildModel model.rowNo model.colNo newSeedInt
+                buildModel model.rowNo model.colNo newSeedInt
 
         Bigger ->
             let
@@ -32,7 +32,7 @@ update message model =
                 newColNo =
                     model.colNo + 5
             in
-            buildModel newRowNo newColNo model.seedInt
+                buildModel newRowNo newColNo model.seedInt
 
         Smaller ->
             let
@@ -48,7 +48,7 @@ update message model =
                     else
                         model.colNo - 5
             in
-            buildModel newRowNo newColNo model.seedInt
+                buildModel newRowNo newColNo model.seedInt
 
 
 model : Model
