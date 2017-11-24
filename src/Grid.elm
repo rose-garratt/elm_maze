@@ -67,6 +67,32 @@ get ( row, col ) grid =
         |> Maybe.andThen (Array.get col)
 
 
+set : Position -> a -> Grid a -> Grid a
+set ( r, c ) value grid =
+    let
+        setInRow : Array a -> Array a
+        setInRow cols =
+            let
+                oldValue =
+                    Array.get c cols
+            in
+                case oldValue of
+                    Nothing ->
+                        cols
+
+                    Just _ ->
+                        Array.set c value cols
+
+        replaceRow : Array a -> Grid a
+        replaceRow newRow =
+            Array.set r newRow grid
+    in
+        Array.get r grid
+            |> Maybe.map setInRow
+            |> Maybe.map replaceRow
+            |> Maybe.withDefault grid
+
+
 map : (a -> b) -> Grid a -> Grid b
 map fn gd =
     Array.map (\row -> Array.map fn row) gd
