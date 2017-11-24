@@ -24,19 +24,15 @@ main : Html msg
 main =
     let
         grid =
-            createGrid 4 6 0
+            create 4 6 0
                 |> indexedMap (\row col a -> ( row, col ))
     in
-    text <| toString grid
+        text <| toString grid
 
 
-create : RowNo -> ColNo -> a -> Grid a
-create rowNo colNo thing =
-    let
-        row =
-            Array.repeat colNo thing
-    in
-    Array.repeat rowNo row
+empty : Grid a
+empty =
+    Array.empty
 
 
 height : Grid a -> RowNo
@@ -65,10 +61,6 @@ toList grid =
     flatten grid |> Array.toList
 
 
-
---TODO Get all of the the positions from a Grid
-
-
 get : Position -> Grid a -> Maybe a
 get ( row, col ) grid =
     Array.get row grid
@@ -85,6 +77,7 @@ indexedMap fn gd =
     Array.indexedMap (\rownum row -> Array.indexedMap (\colnum col -> fn ( rownum, colnum ) col) row) gd
 
 
-createGrid : RowNo -> ColNo -> a -> Grid a
-createGrid r c intval =
-    Array.repeat r (Array.repeat c intval)
+create : RowNo -> ColNo -> a -> Grid a
+create rowNos colNos thing =
+    Array.repeat colNos thing
+        |> Array.repeat rowNos
