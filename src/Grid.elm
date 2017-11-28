@@ -35,6 +35,12 @@ empty =
     Array.empty
 
 
+create : RowNo -> ColNo -> a -> Grid a
+create rowNos colNos thing =
+    Array.repeat colNos thing
+        |> Array.repeat rowNos
+
+
 height : Grid a -> RowNo
 height grid =
     Array.length grid
@@ -101,12 +107,6 @@ map fn gd =
 indexedMap : (Position -> a -> b) -> Grid a -> Grid b
 indexedMap fn gd =
     Array.indexedMap (\rownum row -> Array.indexedMap (\colnum col -> fn ( rownum, colnum ) col) row) gd
-
-
-create : RowNo -> ColNo -> a -> Grid a
-create rowNos colNos thing =
-    Array.repeat colNos thing
-        |> Array.repeat rowNos
 
 
 prettyPrint : Int -> Grid a -> List String
