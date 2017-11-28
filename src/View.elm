@@ -103,12 +103,13 @@ drawLineyMaze maze =
             drawCell scale position cell
 
         fnC : ( Position, Cell ) -> List (S.Svg a)
-        fnC ( position, cell ) =
+        fnC ( position, _ ) =
             let
                 color =
-                    Grid.get position cg |> Maybe.withDefault Color.green
+                    Grid.get position cg
             in
-                [ colorCell scale position color ]
+                Maybe.map (\c -> [ colorCell scale position c ]) color
+                    |> Maybe.withDefault []
 
         width =
             cols
