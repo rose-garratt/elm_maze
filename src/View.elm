@@ -238,9 +238,7 @@ colorGrid origin maze =
         maxDist =
             dists
                 |> Grid.toList
-                |> List.sort
-                |> List.reverse
-                |> List.head
+                |> List.maximum
                 |> Maybe.withDefault absMax
 
         shade : Int -> Color
