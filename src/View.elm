@@ -1,7 +1,7 @@
 module View exposing (view)
 
 import Array exposing (Array)
-import Grid exposing (Position)
+import Grid exposing (Grid, Position)
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -10,6 +10,8 @@ import Maze exposing (Boundary(..), Cell, Direction(..), Maze, boundaryOfCell)
 import Model exposing (..)
 import Svg as S exposing (Svg)
 import Svg.Attributes as SA
+import AStar
+import Color exposing (Color)
 
 
 mainContainer : Html.Attribute msg
@@ -32,25 +34,7 @@ buttonStyler =
 
 view : Model -> Html Message
 view model =
-    div [] [ div [ mainContainer ] [ drawLineyMaze model.maze, buttonView model, test model.maze ] ]
-
-
-test : Maze -> Html msg
-test maze =
-    let
-        -- position =
-        --     ( 0, 0 )
-        --
-        -- canIMove : Direction -> Bool
-        -- canIMove =
-        --     Maze.canIMove maze position
-        -- dir =
-        --     [ canIMove North, canIMove South, canIMove East, canIMove West ]
-        dir =
-            Maze.validDirections maze ( 1, 1 )
-    in
-        toString dir
-            |> text
+    div [] [ div [ mainContainer ] [ drawLineyMaze model.maze, buttonView model ] ]
 
 
 drawNorthWall : Int -> Coordinate -> S.Svg msg
@@ -65,7 +49,37 @@ drawEastWall scale { x, y } =
 
 drawWall : Coordinate -> Coordinate -> S.Svg msg
 drawWall c1 c2 =
-    S.line [ SA.x1 (toString c1.x), SA.y1 (toString c1.y), SA.x2 (toString c2.x), SA.y2 (toString c2.y), SA.style "stroke:rgb(255,0,0);stroke-width:2" ] []
+    S.line [ SA.x1 (toString c1.x), SA.y1 (toString c1.y), SA.x2 (toString c2.x), SA.y2 (toString c2.y), SA.style "stroke:black;stroke-linecap:round;stroke-width:3" ] []
+
+
+colorBlock : Int -> Coordinate -> Color -> S.Svg msg
+colorBlock scale coord color =
+    let
+        fillStyle =
+            "fill:" ++ colorToHtmlRgb color
+
+        _ =
+            Debug.log "Style = " fillStyle
+    in
+        S.rect [ SA.x (toString coord.x), SA.y (toString coord.y), SA.width (toString scale), SA.height (toString scale), SA.style fillStyle ] []
+
+
+colorToHtmlRgb : Color -> String
+colorToHtmlRgb color =
+    let
+        rgb =
+            Color.toRgb color
+    in
+        "rgb(" ++ (toString rgb.red) ++ "," ++ (toString rgb.green) ++ "," ++ (toString rgb.blue) ++ ")"
+
+
+colorCell : Int -> Position -> Color -> S.Svg msg
+colorCell scale position color =
+    let
+        coordinateOfCell =
+            asCoordinate position scale
+    in
+        colorBlock scale coordinateOfCell color
 
 
 drawLineyMaze : Maze -> Html msg
@@ -81,9 +95,20 @@ drawLineyMaze maze =
         rows =
             Grid.height maze
 
-        fn : ( Position, Cell ) -> List (S.Svg a)
-        fn ( position, cell ) =
+        cg =
+            colorGrid ( rows // 2, cols // 2 ) maze
+
+        fnB : ( Position, Cell ) -> List (S.Svg a)
+        fnB ( position, cell ) =
             drawCell scale position cell
+
+        fnC : ( Position, Cell ) -> List (S.Svg a)
+        fnC ( position, cell ) =
+            let
+                color =
+                    Grid.get position cg |> Maybe.withDefault Color.green
+            in
+                [ colorCell scale position color ]
 
         width =
             cols
@@ -104,12 +129,27 @@ drawLineyMaze maze =
         asHtml : List (S.Svg msg) -> Html msg
         asHtml svgMsgs =
             S.svg [ SA.width width, SA.height height, SA.viewBox viewbox ] svgMsgs
+
+        cellBorders =
+            Grid.indexedMap gridToCellNPosition maze
+                |> Grid.map fnB
+                |> Grid.toList
+                |> List.concat
+
+        cellColors =
+            Grid.indexedMap gridToCellNPosition maze
+                |> Grid.map fnC
+                |> Grid.toList
+                |> List.concat
+
+        boundaries =
+            drawBoundary scale rows cols
     in
-        Grid.indexedMap gridToCellNPosition maze
-            |> Grid.map fn
-            |> Grid.toList
-            |> List.concat
-            |> List.append (drawBoundary scale rows cols)
+        List.concat
+            [ cellColors
+            , cellBorders
+            , boundaries
+            ]
             |> asHtml
 
 
@@ -182,3 +222,42 @@ buttonView model =
             , button [ onClick Bigger ] [ text "Bigger" ]
             , button [ onClick Smaller, disabled (not smallable) ] [ text "Smaller" ]
             ]
+
+
+colorGrid : Position -> Maze -> Grid.Grid Color
+colorGrid origin maze =
+    let
+        absMax =
+            Grid.height maze * Grid.width maze
+
+        dists : Grid.Grid Int
+        dists =
+            AStar.breadthFirst maze origin
+                |> Grid.map (Maybe.withDefault absMax)
+
+        maxDist =
+            dists
+                |> Grid.toList
+                |> List.sort
+                |> List.reverse
+                |> List.head
+                |> Maybe.withDefault absMax
+
+        shade : Int -> Color
+        shade dist =
+            let
+                intensity : Float
+                intensity =
+                    toFloat (maxDist - dist) / toFloat maxDist
+
+                dark : Int
+                dark =
+                    (255.0 * intensity) |> round
+
+                bright : Int
+                bright =
+                    128 + (128.0 * intensity |> round)
+            in
+                Color.rgb dark bright dark
+    in
+        Grid.map shade dists
