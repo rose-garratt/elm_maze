@@ -14,6 +14,15 @@ import AStar
 import Color exposing (Color)
 
 
+type alias Coordinate =
+    { x : Int, y : Int }
+
+
+asCoordinate : Position -> Int -> Coordinate
+asCoordinate ( row, col ) scale =
+    { x = col * scale, y = row * scale }
+
+
 view : Model -> Html Message
 view model =
     let
@@ -194,15 +203,6 @@ drawCell scale position cell =
 
             ( False, False ) ->
                 []
-
-
-type alias Coordinate =
-    { x : Int, y : Int }
-
-
-asCoordinate : Position -> Int -> Coordinate
-asCoordinate ( row, col ) scale =
-    { x = col * scale, y = row * scale }
 
 
 buttonView : Model -> Html Message
