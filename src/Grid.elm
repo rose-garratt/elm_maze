@@ -63,14 +63,13 @@ flatten =
 
 
 toList : Grid a -> List a
-toList grid =
-    flatten grid |> Array.toList
+toList =
+    flatten >> Array.toList
 
 
 get : Position -> Grid a -> Maybe a
-get ( row, col ) grid =
-    Array.get row grid
-        |> Maybe.andThen (Array.get col)
+get ( row, col ) =
+    Array.get row >> Maybe.andThen (Array.get col)
 
 
 set : Position -> a -> Grid a -> Grid a
@@ -94,14 +93,13 @@ set ( r, c ) value grid =
             Array.set r newRow grid
     in
         Array.get r grid
-            |> Maybe.map setInRow
-            |> Maybe.map replaceRow
+            |> Maybe.map (setInRow >> replaceRow)
             |> Maybe.withDefault grid
 
 
 map : (a -> b) -> Grid a -> Grid b
 map fn gd =
-    Array.map (\row -> Array.map fn row) gd
+    Array.map (Array.map fn) gd
 
 
 indexedMap : (Position -> a -> b) -> Grid a -> Grid b
