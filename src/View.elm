@@ -14,27 +14,20 @@ import AStar
 import Color exposing (Color)
 
 
-mainContainer : Html.Attribute msg
-mainContainer =
-    style
-        [ ( "backgroundColor", "" )
-        , ( "width", "auto" )
-        , ( "padding", "25px" )
-        , ( "position", "center" )
-        , ( "text-align", "center" )
-        , ( "margin", "auto" )
-        ]
-
-
-buttonStyler : Html.Attribute msg
-buttonStyler =
-    style
-        [ ( "padding", "25px" ) ]
-
-
 view : Model -> Html Message
 view model =
-    div [] [ div [ mainContainer ] [ drawLineyMaze model.maze, buttonView model ] ]
+    let
+        mainContainerStyle =
+            style
+                [ ( "backgroundColor", "" )
+                , ( "width", "auto" )
+                , ( "padding", "25px" )
+                , ( "position", "center" )
+                , ( "text-align", "center" )
+                , ( "margin", "auto" )
+                ]
+    in
+        div [] [ div [ mainContainerStyle ] [ drawLineyMaze model.maze, buttonView model ] ]
 
 
 drawNorthWall : Int -> Coordinate -> S.Svg msg
@@ -215,10 +208,14 @@ asCoordinate ( row, col ) scale =
 buttonView : Model -> Html Message
 buttonView model =
     let
+        buttonStyle =
+            style
+                [ ( "padding", "25px" ) ]
+
         smallable =
             not (model.rowNo <= 5 || model.colNo <= 5)
     in
-        div [ buttonStyler ]
+        div [ buttonStyle ]
             [ button [ onClick Next ] [ text "Next" ]
             , button [ onClick Bigger ] [ text "Bigger" ]
             , button [ onClick Smaller, disabled (not smallable) ] [ text "Smaller" ]
